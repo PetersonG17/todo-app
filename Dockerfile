@@ -1,8 +1,18 @@
-FROM node:14-alpine
-ENV NODE_ENV=production
-WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
-COPY . .
+# https://blog.logrocket.com/node-js-docker-improve-dx/
+FROM node:14-alpine as base
+
+WORKDIR /src
+COPY package*.json /
 EXPOSE 3000
-CMD ["npm", "start"]
+
+FROM base as production
+ENV NODE_ENV=production
+RUN npm ci
+COPY . /
+CMD ["node", "bin/www"]
+
+FROM base as dev
+ENV NODE_ENV=development
+RUN npm install -g nodemon && npm install
+COPY . /
+CMD ["nodemon", "bin/www"]
