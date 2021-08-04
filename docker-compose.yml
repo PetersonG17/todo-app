@@ -1,16 +1,23 @@
-version: '3.8'
-
+version: '3'
 services:
-  todoapp:
-    image: todoapp
+#   nodejs-server:
+#     build:
+#       context: ./api
+#       dockerfile: Dockerfile-dev
+#     ports:
+#       - "3080:3080"
+#     container_name: node-api
+#     volumes:
+#        - ./api:/usr/src/app/api
+#        - /usr/src/app/api/node_modules
+
+  vue-frontend:
     build:
-      context: ./
-      target: dev
-    volumes:
-      - .:/src
-    command: "npm run start:dev"
-    environment:
-      NODE_ENV: development
-      DEBUG: nodejs-docker-express:*
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - 3000:3000
+      - "8080:8080"
+    working_dir: "/src/app"
+    container_name: vue-frontend
+    volumes:
+       - ./frontend:/src/app
